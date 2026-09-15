@@ -1,0 +1,27 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment Variables & Secrets
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Runtime SQLite Database
+data/*.db
+data/*.sqlite3
+!data/.gitkeep
+
+# Uploaded Files
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
