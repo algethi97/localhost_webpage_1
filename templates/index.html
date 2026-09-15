@@ -18,7 +18,7 @@
       <div class="nav-menu">
         <a href="/" class="nav-btn active">홈</a>
         <a href="/guestbook" class="nav-btn">방명록</a>
-        <a href="/photo" class="nav-btn">사진첩</a>
+        <a href="/photo" class="nav-btn">나.작.사.</a>
       </div>
     </div>
   </nav>
@@ -32,6 +32,25 @@
         누구나 자유롭게 접속하여 방명록에 소중한 발자취를 남기고,<br>
         사진을 함께 공유할 수 있는 열린 홈페이지입니다.
       </p>
+
+      <!-- 스크롤을 충분히 내려야 나타나는 미스터리 영역 -->
+      <div class="scroll-mystery-zone">
+        <div class="dot-stream">
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+        </div>
+        <div class="danger-box">
+          <span id="danger-trigger" class="danger-trigger">다만!</span><br>
+          <span class="danger-subtext">아이디어가 없으니 당신의 시력이라도 가져가겠습니다! 🕶️</span><br>
+          나중에 고칠게요...
+        </div>
+      </div>
     </section>
 
     <!-- 페이지 이동 카드 그리드 -->
@@ -70,6 +89,44 @@
   <footer class="footer">
     <p>&copy; 2026 Mini-Project. Built with FastAPI & ngrok.</p>
   </footer>
+
+  <!-- '다만!' 노출 시 비비드 레드 테마 전환 스크립트 -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const trigger = document.getElementById("danger-trigger");
+      if (!trigger) return;
+
+      // 1. 스크롤이 상단(맨 위 80px 이내)에 머물면 무조건 일반 평범한 테마 유지
+      const checkScrollTop = () => {
+        if (window.scrollY < 80) {
+          document.body.classList.remove("vivid-red-mode");
+        }
+      };
+
+      window.addEventListener("scroll", checkScrollTop, { passive: true });
+      checkScrollTop(); // 초기 로딩 시 즉시 검사
+
+      // 2. '다만!'이 화면에 온전히 들어왔을 때만 비비드 레드로 전환
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && window.scrollY >= 80) {
+            document.body.classList.add("vivid-red-mode");
+          } else {
+            // 트리거가 화면 아래로 벗어나거나 상단으로 이동 시 평범한 모드로 복귀
+            const rect = trigger.getBoundingClientRect();
+            if (rect.top > (window.innerHeight || document.documentElement.clientHeight) * 0.7 || window.scrollY < 80) {
+              document.body.classList.remove("vivid-red-mode");
+            }
+          }
+        });
+      }, {
+        threshold: 0.5, // 50% 이상 화면에 확실히 들어왔을 때만 발동
+        rootMargin: "0px 0px -80px 0px" // 하단 80px 여유를 두어 살짝 걸치는 정도로는 미발동
+      });
+
+      observer.observe(trigger);
+    });
+  </script>
 </body>
 </html>
 
