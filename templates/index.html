@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N.J.H.</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+</head>
+<body>
+  <!-- 상단 네비게이션 -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">✨</span>
+        <span>NaJakHome</span>
+      </a>
+      <div class="nav-menu">
+        <a href="/" class="nav-btn active">홈</a>
+        <a href="/guestbook" class="nav-btn">방명록</a>
+        <a href="/photo" class="nav-btn">사진첩</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="container">
+    <section class="hero">
+      <div class="hero-badge">Welcome to NaJakHome</div>
+      <h1 class="hero-title">나만의 작은 홈페이지에 오신걸 환영합니다!</h1>
+      <p class="hero-desc">
+        누구나 자유롭게 접속하여 방명록에 소중한 발자취를 남기고,<br>
+        사진을 함께 공유할 수 있는 열린 홈페이지입니다.
+      </p>
+    </section>
+
+    <!-- 페이지 이동 카드 그리드 -->
+    <section class="card-grid">
+      <!-- 1. 방명록 카드 -->
+      <a href="/guestbook" class="feature-card">
+        <div class="card-icon"><span class="icon-inner">💬</span></div>
+        <h2 class="card-title">실시간 방명록</h2>
+        <p class="card-desc">
+          방문 소감이나 나누고 싶은 이야기를 적어보세요.<br>
+          엔터(Enter) 키로 빠르게 메시지를 보낼 수 있습니다.
+        </p>
+        <div class="card-action">
+          <span>방명록 작성하러 가기</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 2. 사진 업로드 카드 -->
+      <a href="/photo" class="feature-card">
+        <div class="card-icon photo"><span class="icon-inner">📷</span></div>
+        <h2 class="card-title">사진 갤러리</h2>
+        <p class="card-desc">
+          공유하고 싶은 멋진 순간을 사진으로 남겨보세요.<br>
+          JPG와 PNG 이미지 파일을 안전하게 보관합니다.
+        </p>
+        <div class="card-action">
+          <span>사진 업로드하러 가기</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+    </section>
+  </main>
+
+  <!-- 하단 푸터 -->
+  <footer class="footer">
+    <p>&copy; 2026 Mini-Project. Built with FastAPI & ngrok.</p>
+  </footer>
+</body>
+</html>
+

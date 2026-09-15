@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나작사</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📷</text></svg>">
+</head>
+<body>
+  <!-- 상단 네비게이션 -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">✨</span>
+        <span>NaJakHome</span>
+      </a>
+      <div class="nav-menu">
+        <a href="/" class="nav-btn">홈</a>
+        <a href="/guestbook" class="nav-btn">방명록</a>
+        <a href="/photo" class="nav-btn active">나.작.사.</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- 헤더 & 홈으로 이동 버튼 -->
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">📷 나.작.사.</h1>
+        <p class="page-subtitle"><strong>나만의 작은 사진첩</strong></p>
+        <p class="page-subtitle">순간의 추억을 사진으로 공유해보세요. (JPG, PNG)</p>
+      </div>
+      <a href="/" class="btn-back">
+        <span>&larr;</span>
+        <span>홈으로 돌아가기</span>
+      </a>
+    </header>
+
+    <!-- 사진 업로드 패널 -->
+    <section class="panel">
+      <h2 class="panel-title">📤 사진 업로드</h2>
+      
+      <!-- 파일 선택 및 드래그 앤 드롭 영역 -->
+      <div id="dropzone" class="dropzone">
+        <div class="dropzone-icon">🖼️</div>
+        <p class="dropzone-text">사진 파일을 이곳에 끌어다 놓거나 클릭하세요</p>
+        <p class="dropzone-subtext">지원 파일 형식: <strong>JPG, JPEG, PNG</strong> (최대 10MB)</p>
+        <input 
+          type="file" 
+          id="photo-file-input" 
+          class="file-input" 
+          accept=".jpg, .jpeg, .png, image/jpeg, image/png"
+        >
+      </div>
+
+      <!-- 선택된 파일 미리보기 바 -->
+      <div id="file-preview-bar" class="file-preview-bar">
+        <div>
+          <span id="selected-file-name" style="font-weight: 600; font-size: 0.9rem;"></span>
+          <span id="selected-file-size" style="color: var(--text-muted); font-size: 0.8rem; margin-left: 8px;"></span>
+        </div>
+        <button type="button" id="upload-btn" class="btn-primary" style="padding: 8px 18px; font-size: 0.88rem;">
+          <span>사진 올리기</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 갤러리 그리드 영역 -->
+    <section>
+      <div class="feed-header">
+        <h2 class="feed-title">🖼️ 공유된 사진첩</h2>
+        <span id="photo-count" class="feed-count">0장의 사진</span>
+      </div>
+
+      <div id="gallery-grid" class="gallery-grid">
+        <!-- 업로드된 사진들이 여기에 표시됩니다 -->
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <div class="empty-icon">🏞️</div>
+          <p>아직 등록된 사진이 없습니다. 첫 번째 사진을 올려보세요!</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 Mini-Project. Built with FastAPI & ngrok.</p>
+  </footer>
+
+  <!-- 사진 확대 보기 모달 (Lightbox) -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <div class="lightbox-content">
+      <button type="button" id="lightbox-close" class="lightbox-close" aria-label="닫기">&times;</button>
+      <img id="lightbox-img" src="" alt="확대된 사진">
+      <div id="lightbox-caption" class="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <script src="/static/js/photo.js"></script>
+</body>
+</html>
+
