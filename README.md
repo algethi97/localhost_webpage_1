@@ -64,3 +64,4 @@ mini-project_0915/
 └── data/                      # 데이터베이스 디렉토리
     └── guestbook.db           # SQLite DB
 ```
+

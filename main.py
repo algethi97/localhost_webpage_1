@@ -1,6 +1,15 @@
 import os
 import sys
 import argparse
+
+# Windows 터미널 한글 및 이모지 출력 인코딩 설정
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except AttributeError:
+        pass
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -72,12 +81,12 @@ def main():
             if domain:
                 tunnel_options["domain"] = domain
 
-            print("\n" + "=" * 60)
-            print("🚀 [외부 공개 모드] ngrok 터널링을 활성화하는 중입니다...")
+            print("\n" + "=" * 60, flush=True)
+            print("🚀 [외부 공개 모드] ngrok 터널링을 활성화하는 중입니다...", flush=True)
             public_tunnel = ngrok.connect(**tunnel_options)
-            print(f"🌟 외부 공개 URL: {public_tunnel.public_url}")
-            print(f"🏠 로컬 접속 URL: http://127.0.0.1:{port}")
-            print("=" * 60 + "\n")
+            print(f"🌟 외부 공개 URL: {public_tunnel.public_url}", flush=True)
+            print(f"🏠 로컬 접속 URL: http://127.0.0.1:{port}", flush=True)
+            print("=" * 60 + "\n", flush=True)
 
             # Uvicorn 서버 실행
             uvicorn.run(app, host="0.0.0.0", port=port)
