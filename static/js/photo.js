@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const previewBar = document.getElementById("file-preview-bar");
   const selectedFileName = document.getElementById("selected-file-name");
   const selectedFileSize = document.getElementById("selected-file-size");
+  const captionInput = document.getElementById("photo-caption-input");
   const uploadBtn = document.getElementById("upload-btn");
   const galleryGrid = document.getElementById("gallery-grid");
   const photoCount = document.getElementById("photo-count");
@@ -67,12 +68,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createPhotoCardHTML(photo) {
     const safeName = escapeHTML(photo.original_name);
+    const safeCaption = photo.caption ? escapeHTML(photo.caption) : "";
+    const captionHTML = safeCaption 
+      ? `<div class="gallery-caption">💬 ${safeCaption}</div>` 
+      : "";
+
     return `
-      <div class="gallery-card" data-url="${photo.url}" data-name="${safeName}">
+      <div class="gallery-card" data-url="${photo.url}" data-name="${safeName}" data-caption="${safeCaption}">
         <div class="gallery-img-wrapper">
           <img src="${photo.url}" alt="${safeName}" class="gallery-img" loading="lazy">
         </div>
         <div class="gallery-info">
+          ${captionHTML}
           <div class="gallery-date">🕒 ${photo.created_at}</div>
         </div>
       </div>
@@ -85,15 +92,23 @@ document.addEventListener("DOMContentLoaded", () => {
       card.addEventListener("click", () => {
         const url = card.getAttribute("data-url");
         const name = card.getAttribute("data-name");
-        openLightbox(url, name);
+        const caption = card.getAttribute("data-caption") || "";
+        openLightbox(url, name, caption);
       });
     });
   }
 
-  function openLightbox(url, name) {
+  function openLightbox(url, name, caption = "") {
     if (!lightboxModal) return;
     lightboxImg.src = url;
-    lightboxCaption.textContent = name;
+    if (caption) {
+      lightboxCaption.innerHTML = `
+        <div style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: #fff;">💬 ${caption}</div>
+        <div style="font-size: 0.82rem; color: #cbd5e1;">${name}</div>
+      `;
+    } else {
+      lightboxCaption.textContent = name;
+    }
     lightboxModal.classList.add("active");
   }
 
@@ -141,6 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetFileInput() {
     currentSelectedFile = null;
     fileInput.value = "";
+    if (captionInput) captionInput.value = "";
     previewBar.style.display = "none";
   }
 
@@ -170,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 7. 사진 파일 서버 업로드
+  // 7. 사진 파일 서버 업로드 (코멘트 포함)
   uploadBtn.addEventListener("click", async () => {
     if (!currentSelectedFile) {
       alert("업로드할 사진 파일을 선택해주세요.");
@@ -182,6 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const formData = new FormData();
     formData.append("file", currentSelectedFile);
+    if (captionInput) {
+      formData.append("caption", captionInput.value.trim());
+    }
 
     try {
       const response = await fetch("/api/photos", {
@@ -212,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       // 모달 클릭 이벤트 연결
       newCard.addEventListener("click", () => {
-        openLightbox(newPhoto.url, newPhoto.original_name);
+        openLightbox(newPhoto.url, newPhoto.original_name, newPhoto.caption || "");
       });
 
       galleryGrid.prepend(newCard);

@@ -36,9 +36,17 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 filename TEXT NOT NULL,
                 original_name TEXT NOT NULL,
+                caption TEXT DEFAULT '',
                 created_at TEXT NOT NULL
             )
         """)
+
+        # 기존 DB 호환을 위한 caption 컬럼 자동 추가 (마이그레이션)
+        cursor.execute("PRAGMA table_info(photos)")
+        columns = [col[1] for col in cursor.fetchall()]
+        if "caption" not in columns:
+            cursor.execute("ALTER TABLE photos ADD COLUMN caption TEXT DEFAULT ''")
+
         conn.commit()
 
 

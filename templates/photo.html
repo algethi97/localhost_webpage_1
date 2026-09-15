@@ -54,15 +54,31 @@
         >
       </div>
 
-      <!-- 선택된 파일 미리보기 바 -->
-      <div id="file-preview-bar" class="file-preview-bar">
-        <div>
-          <span id="selected-file-name" style="font-weight: 600; font-size: 0.9rem;"></span>
-          <span id="selected-file-size" style="color: var(--text-muted); font-size: 0.8rem; margin-left: 8px;"></span>
+      <!-- 선택된 파일 미리보기 및 코멘트 입력 바 -->
+      <div id="file-preview-bar" class="file-preview-bar" style="display: none; flex-direction: column; gap: 14px; margin-top: 18px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+          <div>
+            <span id="selected-file-name" style="font-weight: 600; font-size: 0.92rem; color: var(--primary);"></span>
+            <span id="selected-file-size" style="color: var(--text-muted); font-size: 0.82rem; margin-left: 8px;"></span>
+          </div>
         </div>
-        <button type="button" id="upload-btn" class="btn-primary" style="padding: 8px 18px; font-size: 0.88rem;">
-          <span>사진 올리기</span>
-        </button>
+
+        <div style="width: 100%;">
+          <label for="photo-caption-input" class="form-label" style="font-size: 0.88rem; font-weight: 600;">💬 사진 코멘트 (선택사항)</label>
+          <input 
+            type="text" 
+            id="photo-caption-input" 
+            class="form-input" 
+            placeholder="이 사진에 대한 이야기나 설명을 자유롭게 남겨보세요... (최대 100자)" 
+            maxlength="100"
+          >
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; width: 100%;">
+          <button type="button" id="upload-btn" class="btn-primary" style="padding: 10px 24px; font-size: 0.92rem;">
+            <span>🚀 사진 올리기</span>
+          </button>
+        </div>
       </div>
     </section>
 

@@ -3,10 +3,10 @@ import uuid
 import shutil
 from pathlib import Path
 from datetime import datetime
-from typing import List
+from typing import Optional, List
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from database import TEMPLATES_DIR, UPLOADS_DIR, get_db
 
@@ -22,6 +22,7 @@ class PhotoEntry(BaseModel):
     id: int
     filename: str
     original_name: str
+    caption: Optional[str] = ""
     url: str
     created_at: str
 
@@ -37,13 +38,14 @@ async def serve_photo():
 async def get_photos():
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, filename, original_name, created_at FROM photos ORDER BY id DESC")
+        cursor.execute("SELECT id, filename, original_name, caption, created_at FROM photos ORDER BY id DESC")
         rows = cursor.fetchall()
         return [
             PhotoEntry(
                 id=row["id"],
                 filename=row["filename"],
                 original_name=row["original_name"],
+                caption=row["caption"] or "",
                 url=f"/static/uploads/{row['filename']}",
                 created_at=row["created_at"]
             )
@@ -51,9 +53,12 @@ async def get_photos():
         ]
 
 
-# 3. 사진 파일 업로드 API (Pillow 기반 가짜 파일 방어 적용)
+# 3. 사진 파일 업로드 API (Pillow 기반 가짜 파일 방어 및 코멘트 기능 적용)
 @router.post("/api/photos", response_model=PhotoEntry, summary="사진 파일 업로드")
-async def upload_photo(file: UploadFile = File(...)):
+async def upload_photo(
+    file: UploadFile = File(...),
+    caption: Optional[str] = Form("")
+):
     # 1) 파일 확장자 검증 (JPG, PNG)
     original_filename = file.filename or "image.jpg"
     ext = Path(original_filename).suffix.lower()
@@ -108,13 +113,14 @@ async def upload_photo(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"파일 저장 중 오류가 발생했습니다: {e}")
 
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    clean_caption = (caption or "").strip()
 
     # 4) DB에 메타데이터 저장
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO photos (filename, original_name, created_at) VALUES (?, ?, ?)",
-            (unique_filename, original_filename, created_at)
+            "INSERT INTO photos (filename, original_name, caption, created_at) VALUES (?, ?, ?, ?)",
+            (unique_filename, original_filename, clean_caption, created_at)
         )
         conn.commit()
         new_id = cursor.lastrowid
@@ -123,6 +129,7 @@ async def upload_photo(file: UploadFile = File(...)):
         id=new_id,
         filename=unique_filename,
         original_name=original_filename,
+        caption=clean_caption,
         url=f"/static/uploads/{unique_filename}",
         created_at=created_at
     )
