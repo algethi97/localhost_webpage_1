@@ -89,11 +89,16 @@ def main():
             print("=" * 60 + "\n", flush=True)
 
             # Uvicorn 서버 실행
-            uvicorn.run(app, host="0.0.0.0", port=port)
+            try:
+                uvicorn.run(app, host="0.0.0.0", port=port)
+            finally:
+                # Ctrl+C로 종료 시 ngrok 터널 프로세스도 100% 확실하게 종료
+                print("\n🛑 서버가 종료되었습니다. ngrok 터널을 안전하게 회수합니다...", flush=True)
+                ngrok.kill()
 
         except Exception as e:
-            print(f"❌ ngrok 연결 중 오류 발생: {e}")
-            print("로컬 모드로 전환하여 서버를 기동합니다.")
+            print(f"❌ ngrok 연결 중 오류 발생: {e}", flush=True)
+            print("로컬 모드로 전환하여 서버를 기동합니다.", flush=True)
             uvicorn.run(app, host="127.0.0.1", port=port)
 
 
