@@ -26,3 +26,11 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Temporary & Scratch Files
+scratch/
+*.log
+*.tmp
+*.bak
+.pytest_cache/
+
+
