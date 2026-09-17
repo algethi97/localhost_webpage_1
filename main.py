@@ -19,7 +19,7 @@ import uvicorn
 from database import STATIC_DIR, init_db
 
 # 기능별 라우터 모듈 임포트
-from routers import home, guestbook, photo
+from routers import home, guestbook, photo, game
 
 # 환경 변수 로드 (.env)
 load_dotenv()
@@ -30,7 +30,7 @@ init_db()
 # FastAPI 애플리케이션 생성
 app = FastAPI(
     title="Mini Project Website",
-    description="FastAPI + ngrok 기반 공개 웹사이트 (대문, 방명록, 사진 갤러리)"
+    description="FastAPI + ngrok 기반 공개 웹사이트 (대문, 방명록, 사진 갤러리, 만다린 게임)"
 )
 
 # 정적 파일 서빙 마운트 (/static)
@@ -40,6 +40,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.include_router(home.router)
 app.include_router(guestbook.router)
 app.include_router(photo.router)
+app.include_router(game.router)
 
 
 def main():

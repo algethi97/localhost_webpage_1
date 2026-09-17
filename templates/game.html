@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>만다린 게임 🍊 - NaJakHome</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/game.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍊</text></svg>">
+</head>
+<body>
+  <!-- 상단 네비게이션 -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">✨</span>
+        <span>NaJakHome</span>
+      </a>
+      <div class="nav-menu">
+        <a href="/" class="nav-btn">홈</a>
+        <a href="/guestbook" class="nav-btn">방명록</a>
+        <a href="/photo" class="nav-btn">나.작.사.</a>
+        <a href="/mandarin" class="nav-btn active">만다린 게임</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 메인 게임 콘텐츠 영역 -->
+  <main class="game-container">
+    <header class="page-header" style="text-align: center; margin-bottom: 1rem;">
+      <div class="game-badge-row">
+        <span class="game-badge">🧩 Fruit Box Puzzle</span>
+        <span class="game-badge orange-badge">🍊 제주 감귤 테마</span>
+      </div>
+      <h1 class="page-title">만다린 게임 🍊</h1>
+      <p class="page-desc">마우스나 손가락으로 드래그하여 <strong>합이 10</strong>이 되도록 상자를 만들어 귤을 터뜨려보세요!</p>
+    </header>
+
+    <!-- 2열 레이아웃: 좌측(게임 영역) + 우측(사이드 Top 5 랭킹) -->
+    <div class="game-layout-container">
+      
+      <!-- [좌측] 메인 게임 영역 -->
+      <section class="game-card-wrapper">
+        
+        <!-- 게임 대시보드 HUD -->
+        <div class="game-hud">
+          <div class="hud-stats-group">
+            <!-- 타이머 -->
+            <div class="hud-stat-box timer-box">
+              <span class="hud-stat-label">⏱️ 남은 시간</span>
+              <span class="hud-stat-value" id="hud-timer">120<span class="stat-unit">s</span></span>
+            </div>
+            
+            <!-- 점수 -->
+            <div class="hud-stat-box score-box">
+              <span class="hud-stat-label">🏆 현재 점수</span>
+              <span class="hud-stat-value" id="hud-score">0<span class="stat-unit">점</span></span>
+            </div>
+
+            <!-- 남은 귤 -->
+            <div class="hud-stat-box remaining-box">
+              <span class="hud-stat-label">🍊 남은 귤</span>
+              <span class="hud-stat-value" id="hud-remaining">170<span class="stat-unit">개</span></span>
+            </div>
+          </div>
+
+          <!-- 조작 버튼 그룹 -->
+          <div class="hud-action-group">
+            <button type="button" id="btn-sound-toggle" class="btn-hud-icon" title="효과음 켜기/끄기" aria-label="효과음 켜기/끄기">
+              <span id="sound-icon">🔊</span>
+            </button>
+            <button type="button" id="btn-start-restart" class="btn-hud-action">
+              <span id="btn-action-text">🎮 게임 시작</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 타이머 프로그레스 게이지 바 -->
+        <div class="timer-gauge-track" aria-hidden="true">
+          <div class="timer-gauge-fill" id="timer-gauge-bar"></div>
+        </div>
+
+        <!-- 게임 플레이어블 캔버스/보드 래퍼 -->
+        <div class="game-board-container" id="board-container">
+          
+          <!-- 게임 시작 전 오버레이 (Start Overlay) -->
+          <div class="game-start-overlay" id="game-start-overlay">
+            <div class="start-overlay-card">
+              <img src="/static/images/mandarin.png" alt="만다린 귤" class="start-mandarin-logo">
+              <h2>상큼한 귤 터뜨리기 퍼즐!</h2>
+              <p>드래그 영역 안의 귤 숫자 총합이 <strong>10</strong>이 되면 팡팡 터집니다.<br>120초 동안 최대한 많은 귤을 수확해 보세요!</p>
+              <button type="button" id="btn-overlay-start" class="start-btn-lg">
+                🚀 게임 시작하기
+              </button>
+            </div>
+          </div>
+
+          <!-- 실제 17x10 타일 그리드 보드 -->
+          <div class="mandarin-board" id="mandarin-board">
+            <!-- 자바스크립트로 170개 타일 동적 렌더링 -->
+          </div>
+
+          <!-- 드래그 선택 박스 시각화 레이어 -->
+          <div class="selection-box" id="selection-box" style="display: none;"></div>
+
+          <!-- 실시간 합계 플로팅 인디케이터 배지 -->
+          <div class="sum-floating-badge" id="sum-badge" style="display: none;">
+            합계: <span id="sum-badge-val">0</span>
+          </div>
+
+        </div>
+
+        <!-- 하단 단축 조작 팁 -->
+        <div class="game-tip-row">
+          <span>💡 <strong>Tip</strong>: 대각선, 직사각형 어떤 형태든 박스 안에 들어온 숫자의 합이 10이면 모두 터집니다!</span>
+        </div>
+
+      </section>
+
+      <!-- [우측] 사이드 Top 5 실시간 랭킹 보드 -->
+      <aside class="sidebar-leaderboard">
+        <div class="sidebar-title-row">
+          <div class="sidebar-title-wrap">
+            <h2>🏆 명예의 전당</h2>
+            <span class="sub-label">실시간 Top 5</span>
+          </div>
+          <button type="button" id="btn-refresh-ranking" class="btn-icon-refresh" title="랭킹 새로고침" aria-label="랭킹 새로고침">
+            🔄
+          </button>
+        </div>
+
+        <!-- 로딩 스켈레톤 -->
+        <div id="leaderboard-skeleton" class="leaderboard-skeleton-list">
+          <div class="skeleton-rank-item"></div>
+          <div class="skeleton-rank-item"></div>
+          <div class="skeleton-rank-item"></div>
+          <div class="skeleton-rank-item"></div>
+          <div class="skeleton-rank-item"></div>
+        </div>
+
+        <!-- Top 5 랭킹 목록 컨테이너 -->
+        <ol id="top5-list" class="top5-list" style="display: none;"></ol>
+
+        <!-- 데이터가 없을 때 -->
+        <div id="top5-empty" class="top5-empty" style="display: none;">
+          <span class="empty-icon">🍃</span>
+          <p>아직 등록된 기록이 없습니다.<br>첫 번째 명예의 전당 주인공이 되어보세요!</p>
+        </div>
+
+        <!-- 내 최근 점수 배지 표시 영역 -->
+        <div class="my-last-score-card" id="my-last-score-card" style="display: none;">
+          <div class="my-score-label">내 최근 기록</div>
+          <div class="my-score-val"><span id="my-last-score">0</span>점</div>
+        </div>
+
+        <!-- 플레이 가이드 안내 박스 -->
+        <div class="mini-guide-box">
+          <h3>🍊 점수 규칙</h3>
+          <ul>
+            <li>없앤 귤 1개당 <strong>1점</strong> 획득</li>
+            <li>5+5, 1+9 등 2개는 2점</li>
+            <li>1+2+3+4 등 4개는 4점</li>
+            <li>120초 올클리어 시 특별 보너스 (+50점)!</li>
+          </ul>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- 게임 결과 & 점수 등록 모달 (Game Over Modal) -->
+    <div class="game-modal-backdrop" id="game-modal" style="display: none;">
+      <div class="game-modal-dialog">
+        
+        <div class="modal-header">
+          <span class="modal-emoji" id="modal-result-emoji">🎉</span>
+          <h2 class="modal-title" id="modal-result-title">게임 종료!</h2>
+          <p class="modal-subtitle" id="modal-result-subtitle">달콤한 감귤 수확이 끝났습니다.</p>
+        </div>
+
+        <!-- 스코어 요약 박스 -->
+        <div class="modal-score-summary">
+          <div class="summary-item">
+            <span class="summary-label">최종 점수</span>
+            <span class="summary-val highlight" id="modal-final-score">0점</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">수확한 귤</span>
+            <span class="summary-val" id="modal-harvested-count">0개</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">플레이 시간</span>
+            <span class="summary-val" id="modal-play-time">120초</span>
+          </div>
+        </div>
+
+        <!-- 닉네임 등록 폼 -->
+        <form id="score-submit-form" class="score-submit-form">
+          <!-- 봇 차단용 허니팟 필드 -->
+          <div class="visually-hidden" aria-hidden="true">
+            <label for="honeypot-game-website">Do not fill this</label>
+            <input type="text" id="honeypot-game-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <label for="player-nickname" class="form-label">
+            명예의 전당에 올릴 닉네임을 입력하세요
+          </label>
+          <div class="input-with-counter">
+            <input 
+              type="text" 
+              id="player-nickname" 
+              name="nickname" 
+              maxlength="20" 
+              placeholder="예: 감귤대장 (1~20자)" 
+              autocomplete="off" 
+              required
+            >
+            <span class="input-counter"><span id="nickname-count">0</span>/20</span>
+          </div>
+
+          <div class="modal-btn-row">
+            <button type="submit" id="btn-submit-score" class="btn-primary-orange">
+              <span class="btn-text">🏆 랭킹 등록하기</span>
+              <span class="btn-loader" style="display: none;"></span>
+            </button>
+            <button type="button" id="btn-modal-restart" class="btn-secondary-custom">
+              다시 도전 🔄
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- 플로팅 토스트 메시지 알림 컨테이너 -->
+    <div id="game-toast-container" class="game-toast-container"></div>
+  </main>
+
+  <!-- 하단 푸터 -->
+  <footer class="footer">
+    <p>&copy; 2026 Mini-Project. Built with FastAPI & ngrok.</p>
+  </footer>
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- 만다린 게임 전용 스크립트 -->
+  <script src="/static/js/game.js"></script>
+</body>
+</html>
+
