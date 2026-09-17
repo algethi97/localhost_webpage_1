@@ -140,9 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // 파일 크기 체크 (10MB 제한)
-    if (file.size > 10 * 1024 * 1024) {
-      alert("❌ 파일 용량이 너무 큽니다. (최대 10MB 이하만 가능)");
+    // 파일 크기 체크 (30MB 제한)
+    if (file.size > 30 * 1024 * 1024) {
+      alert("❌ 파일 용량이 너무 큽니다. (최대 30MB 이하만 가능)");
       resetFileInput();
       return;
     }

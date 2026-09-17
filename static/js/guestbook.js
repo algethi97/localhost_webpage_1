@@ -70,6 +70,24 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  const charCount = document.getElementById("char-count");
+  const honeypotWebsite = document.getElementById("honeypot-website");
+
+  // 실시간 글자 수 카운팅
+  if (messageInput && charCount) {
+    messageInput.addEventListener("input", () => {
+      const len = messageInput.value.length;
+      charCount.textContent = len;
+      if (len >= 500) {
+        charCount.style.color = "#dc2626";
+        charCount.style.fontWeight = "700";
+      } else {
+        charCount.style.color = "var(--text-muted)";
+        charCount.style.fontWeight = "normal";
+      }
+    });
+  }
+
   // 4. 새 방명록 전송 함수
   async function submitGuestbook() {
     const content = messageInput.value.trim();
@@ -79,7 +97,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (content.length > 500) {
+      alert("메시지는 최대 500자까지 작성할 수 있습니다.");
+      return;
+    }
+
     const author = authorInput.value.trim() || "익명";
+    const website = honeypotWebsite ? honeypotWebsite.value : "";
 
     // 버튼 비활성화 (중복 제출 방지)
     submitBtn.disabled = true;
@@ -91,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ author, content })
+        body: JSON.stringify({ author, content, website })
       });
 
       if (!response.ok) {
@@ -101,8 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const newEntry = await response.json();
 
-      // 입력창 비우기 및 포커스
+      // 입력창 비우기 및 포커스, 글자수 리셋
       messageInput.value = "";
+      if (charCount) {
+        charCount.textContent = "0";
+        charCount.style.color = "var(--text-muted)";
+      }
       
       // 화면 목록 최상단에 즉시 추가
       const emptyState = guestbookList.querySelector(".empty-state");

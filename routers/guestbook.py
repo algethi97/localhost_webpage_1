@@ -17,8 +17,9 @@ class GuestbookEntry(BaseModel):
 
 
 class GuestbookCreate(BaseModel):
-    author: Optional[str] = "익명"
-    content: str = Field(..., min_length=1)
+    author: Optional[str] = Field("익명", max_length=20)
+    content: str = Field(..., min_length=1, max_length=500)
+    website: Optional[str] = None  # 봇 차단용 허니팟 필드
 
 
 # 1. 방명록 페이지 서빙
@@ -45,14 +46,24 @@ async def get_guestbook():
         ]
 
 
-# 3. 새 방명록 등록 API
+# 3. 새 방명록 등록 API (허니팟 봇 차단 및 글자수 유효성 검증 적용)
 @router.post("/api/guestbook", response_model=GuestbookEntry, summary="새 방명록 등록")
 async def create_guestbook(data: GuestbookCreate):
+    # 1) 봇 허니팟 검증: 사람이 볼 수 없는 숨김 website 필드에 값이 입력되어 있으면 차단
+    if data.website and data.website.strip():
+        raise HTTPException(status_code=400, detail="비정상적인 접근(스팸 봇)이 감지되었습니다.")
+
     clean_content = data.content.strip()
     if not clean_content:
         raise HTTPException(status_code=400, detail="메시지 내용을 입력해주세요.")
 
+    if len(clean_content) > 500:
+        raise HTTPException(status_code=400, detail="메시지는 최대 500자까지 입력 가능합니다.")
+
     author = (data.author or "").strip() or "익명"
+    if len(author) > 20:
+        author = author[:20]
+
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with get_db() as conn:
